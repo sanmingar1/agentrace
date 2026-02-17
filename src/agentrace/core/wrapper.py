@@ -1,6 +1,6 @@
 """Wrapper API for traced graph execution."""
 
-from typing import Any, Iterator, Optional
+from typing import Any, AsyncIterator, Iterator, Optional
 
 from agentrace.core.interceptor import TraceInterceptor
 from agentrace.core.models import Trace
@@ -54,6 +54,45 @@ class TracedGraph:
         interceptor = TraceInterceptor()
         config = self._merge_callbacks(config, interceptor)
         for chunk in self._graph.stream(input_data, config=config, **kwargs):
+            yield chunk
+        self._last_trace = interceptor.trace
+
+    async def ainvoke(
+        self, input_data: dict[str, Any], config: Optional[dict[str, Any]] = None
+    ) -> dict[str, Any]:
+        """Async version of invoke — run the graph and capture a trace.
+
+        Args:
+            input_data: Input dict to pass to the graph.
+            config: Optional LangGraph config dict. Callbacks will be merged.
+
+        Returns:
+            The graph output dict.
+        """
+        interceptor = TraceInterceptor()
+        config = self._merge_callbacks(config, interceptor)
+        try:
+            result = await self._graph.ainvoke(input_data, config=config)
+        except Exception:
+            self._last_trace = interceptor.trace
+            raise
+        self._last_trace = interceptor.trace
+        return result
+
+    async def astream(
+        self,
+        input_data: dict[str, Any],
+        config: Optional[dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> AsyncIterator[Any]:
+        """Async stream — yield chunks and capture a trace.
+
+        Yields each stream chunk. After iteration completes, the trace
+        is available via ``.last_trace``.
+        """
+        interceptor = TraceInterceptor()
+        config = self._merge_callbacks(config, interceptor)
+        async for chunk in self._graph.astream(input_data, config=config, **kwargs):
             yield chunk
         self._last_trace = interceptor.trace
 
