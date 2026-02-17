@@ -21,6 +21,10 @@ dev = [
     "pytest-cov",
     "ruff",
 ]
+docs = [
+    "mkdocs-material",
+    "pymdown-extensions",
+]
 
 [project.entry-points.pytest11]
 agentrace = "agentrace.plugin"
