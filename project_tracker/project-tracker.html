@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>agentrace - Project Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0d1117;
+            --bg-mid: #161b22;
+            --bg-light: #21262d;
+            --border: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-red: #f85149;
+            --accent-purple: #bc8cff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .project-meta span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Timeline View */
+        .phase-section {
+            background: var(--bg-mid);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .phase-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .phase-meta {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 24px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .task-timeline {
+            margin-top: 15px;
+        }
+
+        .task-item {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateX(3px);
+        }
+
+        .task-item.blocked {
+            opacity: 0.6;
+            border-left: 3px solid var(--accent-red);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .task-title {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-id {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        .task-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .priority-critical {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .priority-high {
+            background: var(--accent-yellow);
+            color: var(--bg-dark);
+        }
+
+        .priority-medium {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .priority-low {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        .status-not_started {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .status-in_progress {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .status-blocked {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .status-done {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .status-backlog {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            border: 1px dashed var(--border);
+        }
+
+        .task-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .task-progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-dark);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .task-progress-fill {
+            height: 100%;
+            background: var(--accent-green);
+            transition: width 0.3s;
+        }
+
+        .subtasks {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .subtask {
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .subtask.completed {
+            color: var(--accent-green);
+            text-decoration: line-through;
+        }
+
+        /* Priority List View */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        select {
+            background: var(--bg-light);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-card {
+            background: var(--bg-mid);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px;
+            transition: all 0.2s;
+        }
+
+        .task-card:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .dependency-warning {
+            background: var(--accent-red);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .task-notes {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-mid);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 agentrace - Project Tracker</h1>
+            <div class="project-meta">
+                <span>📅 Started: <strong id="start-date"></strong></span>
+                <span>🎯 Current Phase: <strong id="current-phase"></strong></span>
+                <span>📊 Total Tasks: <strong id="total-tasks"></strong></span>
+                <span>⏱️ Estimated Hours: <strong id="total-hours"></strong>h</span>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Overall Progress</div>
+                <div class="stat-value" id="overall-progress">0%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tasks Completed</div>
+                <div class="stat-value" id="tasks-completed">0/0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">In Progress</div>
+                <div class="stat-value" id="tasks-in-progress">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Blocked</div>
+                <div class="stat-value" id="tasks-blocked">0</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('timeline')">📈 Timeline View</button>
+            <button class="tab" onclick="switchTab('priority')">📋 Priority List</button>
+        </div>
+
+        <div id="timeline-view" class="view active">
+            <div id="phases-container"></div>
+        </div>
+
+        <div id="priority-view" class="view">
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Phase:</label>
+                    <select id="phase-filter" onchange="filterTasks()">
+                        <option value="all">All Phases</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Priority:</label>
+                    <select id="priority-filter" onchange="filterTasks()">
+                        <option value="all">All Priorities</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select id="status-filter" onchange="filterTasks()">
+                        <option value="all">All Status</option>
+                        <option value="not_started">Not Started</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="done">Done</option>
+                        <option value="backlog">Backlog</option>
+                    </select>
+                </div>
+            </div>
+            <div id="task-list-container" class="task-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let projectData = null;
+
+        async function loadData() {
+            try {
+                const response = await fetch('project-state.json');
+                projectData = await response.json();
+                renderAll();
+            } catch (error) {
+                console.error('Error loading project data:', error);
+            }
+        }
+
+        function renderAll() {
+            renderHeader();
+            renderStats();
+            renderTimeline();
+            renderPriorityList();
+            populateFilters();
+        }
+
+        function renderHeader() {
+            document.getElementById('start-date').textContent = projectData.project.start_date;
+            document.getElementById('current-phase').textContent = projectData.project.current_phase;
+            document.getElementById('total-tasks').textContent = projectData.tasks.length;
+            document.getElementById('total-hours').textContent = projectData.metadata.total_estimated_hours;
+        }
+
+        function renderStats() {
+            const tasks = projectData.tasks;
+            const completed = tasks.filter(t => t.status === 'done').length;
+            const inProgress = tasks.filter(t => t.status === 'in_progress').length;
+            const blocked = tasks.filter(t => t.status === 'blocked').length;
+            
+            const totalProgress = tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length;
+
+            document.getElementById('overall-progress').textContent = Math.round(totalProgress) + '%';
+            document.getElementById('tasks-completed').textContent = `${completed}/${tasks.length}`;
+            document.getElementById('tasks-in-progress').textContent = inProgress;
+            document.getElementById('tasks-blocked').textContent = blocked;
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('phases-container');
+            container.innerHTML = '';
+
+            projectData.phases.forEach(phase => {
+                const phaseTasks = projectData.tasks.filter(t => t.phase === phase.id);
+                const phaseProgress = phaseTasks.length > 0 
+                    ? phaseTasks.reduce((sum, t) => sum + t.progress, 0) / phaseTasks.length 
+                    : 0;
+
+                const phaseEl = document.createElement('div');
+                phaseEl.className = 'phase-section';
+                phaseEl.innerHTML = `
+                    <div class="phase-header">
+                        <div>
+                            <div class="phase-title">${phase.name}</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">
+                                ${phase.description}
+                            </div>
+                        </div>
+                        <div class="phase-meta">
+                            <span>${phase.duration_weeks} week${phase.duration_weeks > 1 ? 's' : ''}</span>
+                            <span class="badge status-${phase.status}">${phase.status.replace('_', ' ')}</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${phaseProgress}%">
+                            <span class="progress-text">${Math.round(phaseProgress)}%</span>
+                        </div>
+                    </div>
+                    <div class="task-timeline" id="tasks-${phase.id}"></div>
+                `;
+
+                const tasksContainer = phaseEl.querySelector(`#tasks-${phase.id}`);
+                phaseTasks.forEach(task => {
+                    tasksContainer.appendChild(createTaskElement(task));
+                });
+
+                container.appendChild(phaseEl);
+            });
+        }
+
+        function createTaskElement(task, detailed = false) {
+            const taskEl = document.createElement('div');
+            taskEl.className = detailed ? 'task-card' : 'task-item';
+            
+            const isBlocked = task.dependencies.some(depId => {
+                const dep = projectData.tasks.find(t => t.id === depId);
+                return dep && dep.status !== 'done';
+            });
+
+            if (isBlocked) taskEl.classList.add('blocked');
+
+            const completedSubtasks = task.subtasks.filter(st => st.completed).length;
+            const subtasksHtml = task.subtasks.map(st => `
+                <div class="subtask ${st.completed ? 'completed' : ''}">
+                    <span>${st.completed ? '✅' : '⬜'}</span>
+                    <span>${st.title}</span>
+                </div>
+            `).join('');
+
+            taskEl.innerHTML = `
+                <div class="task-header">
+                    <div class="task-title">
+                        <span>${task.title}</span>
+                        <span class="task-id">${task.id}</span>
+                    </div>
+                    <div class="task-badges">
+                        <span class="badge priority-${task.priority}">${task.priority}</span>
+                        <span class="badge status-${task.status}">${task.status.replace('_', ' ')}</span>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">${task.estimated_hours}h</span>
+                    </div>
+                </div>
+                <div class="task-progress">
+                    <div class="task-progress-bar">
+                        <div class="task-progress-fill" style="width: ${task.progress}%"></div>
+                    </div>
+                    <span>${task.progress}%</span>
+                    <span>(${completedSubtasks}/${task.subtasks.length} subtasks)</span>
+                </div>
+                ${detailed && task.notes ? `<div class="task-notes">💡 ${task.notes}</div>` : ''}
+                ${detailed && task.tags.length > 0 ? `
+                    <div class="tags">
+                        ${task.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                    </div>
+                ` : ''}
+                ${isBlocked ? `
+                    <div class="dependency-warning">
+                        ⚠️ Blocked by: ${task.dependencies.map(depId => {
+                            const dep = projectData.tasks.find(t => t.id === depId);
+                            return dep ? dep.id : depId;
+                        }).join(', ')}
+                    </div>
+                ` : ''}
+                ${detailed && task.subtasks.length > 0 ? `
+                    <div class="subtasks">
+                        <strong>Subtasks:</strong>
+                        ${subtasksHtml}
+                    </div>
+                ` : ''}
+            `;
+
+            return taskEl;
+        }
+
+        function renderPriorityList() {
+            const container = document.getElementById('task-list-container');
+            container.innerHTML = '';
+
+            const sortedTasks = [...projectData.tasks].sort((a, b) => {
+                const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                }
+                return a.id.localeCompare(b.id);
+            });
+
+            sortedTasks.forEach(task => {
+                container.appendChild(createTaskElement(task, true));
+            });
+        }
+
+        function populateFilters() {
+            const phaseFilter = document.getElementById('phase-filter');
+            projectData.phases.forEach(phase => {
+                const option = document.createElement('option');
+                option.value = phase.id;
+                option.textContent = phase.name;
+                phaseFilter.appendChild(option);
+            });
+        }
+
+        function filterTasks() {
+            const phaseFilter = document.getElementById('phase-filter').value;
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            const container = document.getElementById('task-list-container');
+            container.innerHTML = '';
+
+            const filteredTasks = projectData.tasks.filter(task => {
+                if (phaseFilter !== 'all' && task.phase !== phaseFilter) return false;
+                if (priorityFilter !== 'all' && task.priority !== priorityFilter) return false;
+                if (statusFilter !== 'all' && task.status !== statusFilter) return false;
+                return true;
+            });
+
+            const sortedTasks = filteredTasks.sort((a, b) => {
+                const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                }
+                return a.id.localeCompare(b.id);
+            });
+
+            sortedTasks.forEach(task => {
+                container.appendChild(createTaskElement(task, true));
+            });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-view`).classList.add('active');
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
