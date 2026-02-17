@@ -5,12 +5,11 @@ import json
 import pytest
 from rich.console import Console
 
-from agentrace import wrap, Trace, assertions, to_mermaid
-from agentrace.core.models import NodeStatus, NodeExecution, EdgeTransition, RunMetadata
+from agentrace import Trace, assertions, to_mermaid, wrap
 from agentrace.core.differ import compute_state_diff
+from agentrace.core.models import NodeStatus
 from agentrace.reporters.terminal import print_trace
 from tests.agents.simple_agent import create_simple_agent
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -166,7 +165,8 @@ class TestErrorHandling:
     def test_node_error_captured(self):
         """A node that raises should be captured with ERROR status."""
         from typing import TypedDict
-        from langgraph.graph import StateGraph, START, END
+
+        from langgraph.graph import END, START, StateGraph
 
         class ErrState(TypedDict):
             value: str
@@ -269,7 +269,8 @@ class TestAssertionsWithTrace:
     def test_no_errors_fails(self):
         """A trace with an errored node should fail no_errors."""
         from typing import TypedDict
-        from langgraph.graph import StateGraph, START, END
+
+        from langgraph.graph import END, START, StateGraph
 
         class S(TypedDict):
             v: str
@@ -382,7 +383,8 @@ class TestMermaidGenerator:
     def test_to_mermaid_error_node_style(self):
         """Errored nodes should have red styling."""
         from typing import TypedDict
-        from langgraph.graph import StateGraph, START, END
+
+        from langgraph.graph import END, START, StateGraph
 
         class S(TypedDict):
             v: str

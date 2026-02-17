@@ -82,3 +82,18 @@ class Trace(BaseModel):
         """Generate a Mermaid flowchart diagram of this trace."""
         from agentrace.reporters.mermaid import to_mermaid
         return to_mermaid(self, direction=direction)
+
+    def to_html(self, output_path: Optional[str] = None) -> str:
+        """Generate a self-contained HTML report of this trace."""
+        from agentrace.reporters.html import to_html
+        return to_html(self, output_path=output_path)
+
+    def to_json(self, output_path: Optional[str] = None, indent: int = 2) -> str:
+        """Export this trace as JSON."""
+        from agentrace.reporters.json_reporter import to_json
+        return to_json(self, output_path=output_path, indent=indent)
+
+    def to_junit_xml(self, output_path: Optional[str] = None) -> str:
+        """Generate JUnit XML report of this trace."""
+        from agentrace.reporters.junit import to_junit_xml
+        return to_junit_xml(self, output_path=output_path)

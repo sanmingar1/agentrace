@@ -8,13 +8,11 @@ import json
 import pytest
 from rich.console import Console
 
-from agentrace import wrap, capture, Trace, assertions, to_mermaid, print_trace
-from agentrace.core.models import NodeStatus, NodeExecution, EdgeTransition, RunMetadata
+from agentrace import Trace, assertions, capture, print_trace, to_mermaid, wrap
 from agentrace.core.differ import compute_state_diff
-from agentrace.reporters.mermaid import to_mermaid as mermaid_to_mermaid
+from agentrace.core.models import EdgeTransition, NodeExecution, NodeStatus, RunMetadata
 from tests.agents.routing_agent import create_routing_agent
 from tests.agents.simple_agent import create_simple_agent
-
 
 # ---------------------------------------------------------------------------
 # Conditional routing agent tests
@@ -42,7 +40,7 @@ class TestConditionalRouting:
     def test_general_route(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        result = traced.invoke({
+        traced.invoke({
             "query": "general question",
             "category": "",
             "documents": [],
@@ -325,7 +323,8 @@ class TestMermaidEdgeCases:
 
     def test_mermaid_with_error_trace(self):
         from typing import TypedDict
-        from langgraph.graph import StateGraph, START, END
+
+        from langgraph.graph import END, START, StateGraph
 
         class S(TypedDict):
             v: str

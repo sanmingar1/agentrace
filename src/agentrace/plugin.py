@@ -13,7 +13,7 @@ Usage:
 
 import pytest
 
-from agentrace.core.wrapper import wrap, TracedGraph
+from agentrace.core.wrapper import TracedGraph, wrap
 from agentrace.reporters.terminal import print_trace
 
 
