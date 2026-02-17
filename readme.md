@@ -1,5 +1,10 @@
 # agentrace
 
+[![CI](https://github.com/sanmingar1/agentrace/actions/workflows/ci.yml/badge.svg)](https://github.com/sanmingar1/agentrace/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://pypi.org/project/agentrace/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 Debug & trace library for LangGraph agents. Capture, analyze, and visualize what your agent does — node by node, edge by edge.
 
 **Zero network calls. Zero paid APIs. Pure Python.**
