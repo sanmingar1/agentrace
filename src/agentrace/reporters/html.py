@@ -210,8 +210,8 @@ def _build_node_card(node: dict) -> str:
     <div class="node-card">
       <div class="node-header">
         <span class="node-icon {icon_class}"></span>
-        <span class="node-name">{_escape(node['name'])}</span>
-        <span class="node-step">Step {node['step']}</span>
+        <span class="node-name">{_escape(node["name"])}</span>
+        <span class="node-step">Step {node["step"]}</span>
         <span class="node-duration">{duration}</span>
         <span class="node-chevron">&#9654;</span>
       </div>
@@ -248,9 +248,7 @@ def to_html(trace: Any, output_path: Optional[str] = None) -> str:
     has_errors = data["error_count"] > 0
     status_label = "FAILED" if has_errors else "SUCCESS"
     status_class = "error" if has_errors else "success"
-    status_text = (
-        f"{data['node_count']} nodes executed in {data['total_duration_ms']:.1f}ms"
-    )
+    status_text = f"{data['node_count']} nodes executed in {data['total_duration_ms']:.1f}ms"
     error_class = "error" if has_errors else "success"
 
     node_cards = "\n".join(_build_node_card(n) for n in data["nodes"])

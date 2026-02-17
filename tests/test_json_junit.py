@@ -23,6 +23,7 @@ def trace():
 # JSON reporter
 # ---------------------------------------------------------------------------
 
+
 class TestJsonReporter:
     def test_returns_valid_json(self, trace):
         result = to_json(trace)
@@ -64,6 +65,7 @@ class TestJsonReporter:
 # ---------------------------------------------------------------------------
 # JUnit XML reporter
 # ---------------------------------------------------------------------------
+
 
 class TestJunitReporter:
     def test_returns_valid_xml(self, trace):

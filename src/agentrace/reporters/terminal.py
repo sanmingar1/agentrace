@@ -86,11 +86,7 @@ def _print_model_trace(trace: Any, detailed: bool, console: Console) -> None:
         table.add_column("Status")
 
         for node in nodes:
-            status = (
-                "[green]OK[/green]"
-                if node.status == NodeStatus.SUCCESS
-                else "[red]ERR[/red]"
-            )
+            status = "[green]OK[/green]" if node.status == NodeStatus.SUCCESS else "[red]ERR[/red]"
             table.add_row(
                 str(node.step),
                 node.node_name,

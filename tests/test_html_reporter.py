@@ -107,12 +107,14 @@ class TestHtmlReporter:
     def test_routing_agent_html(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "technical question",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "technical question",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         html = to_html(traced.last_trace)
         assert "classifier" in html
         assert "technical_handler" in html

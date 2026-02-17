@@ -185,9 +185,7 @@ class TraceInterceptor(BaseCallbackHandler):
         """Finalize the graph-level trace metadata."""
         end_time = time.perf_counter()
         self.trace.metadata.timestamp_end = end_time
-        self.trace.metadata.duration_ms = (
-            (end_time - self.trace.metadata.timestamp_start) * 1000
-        )
+        self.trace.metadata.duration_ms = (end_time - self.trace.metadata.timestamp_start) * 1000
         if isinstance(outputs, dict):
             self.trace.metadata.output_data = dict(outputs)
         self.trace.metadata.total_nodes = len(self.trace.nodes)

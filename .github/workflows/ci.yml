@@ -28,9 +28,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -e ".[dev]"
-      - run: pip install pytest-cov
-      - run: pytest --cov=agentrace --cov-report=xml --junitxml=results.xml -p no:agentrace -q
+      - run: pip install -e ".[dev]" pytest-cov
+      # Run with plugin active so traced_agent fixture is available
+      - run: pytest --cov=agentrace --cov-report=xml --junitxml=results.xml -q
       - uses: actions/upload-artifact@v4
         if: always()
         with:
