@@ -18,6 +18,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-cov",
+    "ruff",
 ]
 
 [project.entry-points.pytest11]
@@ -28,6 +30,13 @@ packages = ["src/agentrace"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
 
 [tool.coverage.run]
 source = ["agentrace"]

@@ -1,5 +1,7 @@
 """agentrace core — models, interceptor, differ, and wrapper."""
 
+from agentrace.core.differ import compute_state_diff
+from agentrace.core.interceptor import TraceInterceptor
 from agentrace.core.models import (
     EdgeTransition,
     NodeExecution,
@@ -7,8 +9,6 @@ from agentrace.core.models import (
     RunMetadata,
     Trace,
 )
-from agentrace.core.differ import compute_state_diff
-from agentrace.core.interceptor import TraceInterceptor
 from agentrace.core.wrapper import TracedGraph, wrap
 
 __all__ = [

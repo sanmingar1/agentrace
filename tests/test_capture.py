@@ -5,7 +5,7 @@ import io
 import pytest
 from rich.console import Console
 
-from agentrace import capture, print_trace, assertions
+from agentrace import assertions, capture, print_trace
 from tests.agents.simple_agent import create_simple_agent
 
 

@@ -11,7 +11,6 @@ from agentrace.core.models import (
     EdgeTransition,
     NodeExecution,
     NodeStatus,
-    RunMetadata,
     Trace,
 )
 
