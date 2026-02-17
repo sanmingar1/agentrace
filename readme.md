@@ -107,9 +107,10 @@ def test_my_agent(traced_agent):
 | Mermaid diagram generator | Done |
 | 8 assertion functions | Done |
 | pytest plugin (fixtures + markers) | Done |
-| HTML reporter | Planned |
-| JSON/JUnit reporters | Planned |
-| CI/CD integration | Planned |
+| HTML reporter | Done |
+| JSON/JUnit reporters | Done |
+| CI/CD integration | Done |
+| Async support (`ainvoke`/`astream`) | Done |
 
 ## What makes it different
 
@@ -124,11 +125,13 @@ def test_my_agent(traced_agent):
 
 ## Project Status
 
-- **104 tests passing** | **90% code coverage**
+- **145 tests passing** | **90% code coverage**
 - Phase 1 (PoC): Done
 - Phase 2 (Callbacks): Done
-- Phase 3 (MVP): In progress
-- Current version: 0.1.0-dev
+- Phase 3 (MVP): Done
+- Sprint 4 (HTML/CI/CD): Done
+- Sprint 5 (Docs/Publish): Done
+- Current version: 0.1.0
 
 ## Tech Stack
 
