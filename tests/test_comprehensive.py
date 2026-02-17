@@ -18,16 +18,19 @@ from tests.agents.simple_agent import create_simple_agent
 # Conditional routing agent tests
 # ---------------------------------------------------------------------------
 
+
 class TestConditionalRouting:
     def test_technical_route(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        result = traced.invoke({
-            "query": "technical question",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        result = traced.invoke(
+            {
+                "query": "technical question",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         trace = traced.last_trace
         assert trace is not None
         assertions.node_was_visited(trace, "classifier")
@@ -40,12 +43,14 @@ class TestConditionalRouting:
     def test_general_route(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "general question",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "general question",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         trace = traced.last_trace
         assertions.node_was_visited(trace, "general_handler")
         assertions.node_was_not_visited(trace, "technical_handler")
@@ -54,12 +59,14 @@ class TestConditionalRouting:
     def test_fallback_route(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "random stuff",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "random stuff",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         trace = traced.last_trace
         assertions.node_was_visited(trace, "fallback_handler")
         assertions.node_was_not_visited(trace, "technical_handler")
@@ -68,12 +75,14 @@ class TestConditionalRouting:
     def test_routing_total_nodes(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "technical",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "technical",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         trace = traced.last_trace
         # Conditional edges may cause duplicate node events
         assertions.total_nodes_visited(trace, min=2)
@@ -81,12 +90,14 @@ class TestConditionalRouting:
     def test_routing_mermaid(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "technical",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "technical",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         mermaid = to_mermaid(traced.last_trace)
         assert "classifier" in mermaid
         assert "technical_handler" in mermaid
@@ -94,29 +105,34 @@ class TestConditionalRouting:
     def test_routing_state_at_node(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "technical question",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "technical question",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         trace = traced.last_trace
         # Check the technical_handler output state instead (classifier's
         # state_after may not reflect its output due to callback ordering)
         assertions.state_at_node(
-            trace, "technical_handler",
+            trace,
+            "technical_handler",
             lambda s: "technical" in s.get("response", ""),
         )
 
     def test_routing_rich_report(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        traced.invoke({
-            "query": "technical",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        traced.invoke(
+            {
+                "query": "technical",
+                "category": "",
+                "documents": [],
+                "response": "",
+            }
+        )
         console = Console(file=None, force_terminal=True, width=120)
         print_trace(traced.last_trace, console=console)
         print_trace(traced.last_trace, detailed=True, console=console)
@@ -125,6 +141,7 @@ class TestConditionalRouting:
 # ---------------------------------------------------------------------------
 # Assertion edge cases
 # ---------------------------------------------------------------------------
+
 
 class TestAssertionEdgeCases:
     def test_node_visited_before_same_node(self):
@@ -158,7 +175,8 @@ class TestAssertionEdgeCases:
         # Predicate that raises should propagate
         with pytest.raises(KeyError):
             assertions.state_at_node(
-                traced.last_trace, "retriever",
+                traced.last_trace,
+                "retriever",
                 lambda s: s["nonexistent_key"],
             )
 
@@ -166,6 +184,7 @@ class TestAssertionEdgeCases:
 # ---------------------------------------------------------------------------
 # Differ edge cases
 # ---------------------------------------------------------------------------
+
 
 class TestDifferEdgeCases:
     def test_empty_dicts(self):
@@ -198,6 +217,7 @@ class TestDifferEdgeCases:
 # ---------------------------------------------------------------------------
 # Serialization edge cases
 # ---------------------------------------------------------------------------
+
 
 class TestSerializationEdgeCases:
     def test_trace_roundtrip(self):
@@ -235,6 +255,7 @@ class TestSerializationEdgeCases:
 # ---------------------------------------------------------------------------
 # Model construction
 # ---------------------------------------------------------------------------
+
 
 class TestModelConstruction:
     def test_node_execution_defaults(self):
@@ -282,16 +303,21 @@ class TestModelConstruction:
 # Stream mode tests
 # ---------------------------------------------------------------------------
 
+
 class TestStreamMode:
     def test_stream_with_routing_agent(self):
         graph = create_routing_agent()
         traced = wrap(graph)
-        chunks = list(traced.stream({
-            "query": "technical q",
-            "category": "",
-            "documents": [],
-            "response": "",
-        }))
+        chunks = list(
+            traced.stream(
+                {
+                    "query": "technical q",
+                    "category": "",
+                    "documents": [],
+                    "response": "",
+                }
+            )
+        )
         assert len(chunks) > 0
         trace = traced.last_trace
         assert isinstance(trace, Trace)
@@ -299,12 +325,15 @@ class TestStreamMode:
 
     def test_legacy_capture_with_routing_agent(self):
         graph = create_routing_agent()
-        result = capture(graph, {
-            "query": "general info",
-            "category": "",
-            "documents": [],
-            "response": "",
-        })
+        result = capture(
+            graph,
+            {
+                "query": "general info",
+                "category": "",
+                "documents": [],
+                "response": "",
+            },
+        )
         assert "classifier" in result["node_names"]
         assert "general_handler" in result["node_names"]
 
@@ -312,6 +341,7 @@ class TestStreamMode:
 # ---------------------------------------------------------------------------
 # Mermaid edge cases
 # ---------------------------------------------------------------------------
+
 
 class TestMermaidEdgeCases:
     def test_empty_trace_mermaid(self):

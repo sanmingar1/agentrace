@@ -43,14 +43,16 @@ def capture(graph: Any, input_data: dict) -> dict:
 
             duration_ms = (node_end - node_start) * 1000
 
-            nodes.append({
-                "node_name": node_name,
-                "output": node_output,
-                "timestamp_start": node_start,
-                "timestamp_end": node_end,
-                "duration_ms": duration_ms,
-                "step": step,
-            })
+            nodes.append(
+                {
+                    "node_name": node_name,
+                    "output": node_output,
+                    "timestamp_start": node_start,
+                    "timestamp_end": node_end,
+                    "duration_ms": duration_ms,
+                    "step": step,
+                }
+            )
 
             # Accumulate state
             if isinstance(node_output, dict):

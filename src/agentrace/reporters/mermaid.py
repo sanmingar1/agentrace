@@ -31,14 +31,8 @@ def _get_node_info(trace: Any) -> list[dict]:
 def _get_edge_info(trace: Any) -> list[dict]:
     """Extract edge info as list of dicts with from_node, to_node."""
     if isinstance(trace, dict):
-        return [
-            {"from_node": e[0], "to_node": e[1]}
-            for e in trace.get("edges", [])
-        ]
-    return [
-        {"from_node": e.from_node, "to_node": e.to_node}
-        for e in trace.edges
-    ]
+        return [{"from_node": e[0], "to_node": e[1]} for e in trace.get("edges", [])]
+    return [{"from_node": e.from_node, "to_node": e.to_node} for e in trace.edges]
 
 
 def _sanitize_id(name: str) -> str:
@@ -76,7 +70,7 @@ def to_mermaid(trace: Any, direction: str = "TD") -> str:
         nid = _sanitize_id(node["name"])
         duration = node["duration_ms"]
         label = f"{node['name']}\\n{duration:.1f}ms"
-        lines.append(f"    {nid}[\"{label}\"]")
+        lines.append(f'    {nid}["{label}"]')
 
     # Last node to END
     if nodes:

@@ -5,9 +5,7 @@ from typing import Any, Optional
 from deepdiff import DeepDiff
 
 
-def compute_state_diff(
-    before: dict[str, Any], after: dict[str, Any]
-) -> Optional[dict[str, Any]]:
+def compute_state_diff(before: dict[str, Any], after: dict[str, Any]) -> Optional[dict[str, Any]]:
     """Compute the diff between two state dicts.
 
     Returns a dict with keys "added", "changed", "removed", or None if
