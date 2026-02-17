@@ -1,0 +1,1049 @@
+{
+  "project": {
+    "name": "agentrace",
+    "description": "Debug & Trace Library for LangGraph Agents",
+    "start_date": "2026-02-15",
+    "current_phase": "Phase 3: MVP Complete"
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Phase 1: Proof of Concept",
+      "description": "Fast validation using stream parsing",
+      "duration_weeks": 1,
+      "status": "done",
+      "progress": 100
+    },
+    {
+      "id": "phase-2",
+      "name": "Phase 2: Learning & Migration",
+      "description": "Learn callbacks, migrate to proper architecture",
+      "duration_weeks": 2,
+      "status": "done",
+      "progress": 100
+    },
+    {
+      "id": "phase-3",
+      "name": "Phase 3: MVP Complete",
+      "description": "Assertions, Mermaid, tests",
+      "duration_weeks": 2,
+      "status": "done",
+      "progress": 100
+    },
+    {
+      "id": "sprint-4",
+      "name": "Sprint 4: HTML Reports & CI/CD",
+      "description": "HTML reporter, JSON export, JUnit XML",
+      "duration_weeks": 2,
+      "status": "backlog",
+      "progress": 0
+    },
+    {
+      "id": "sprint-5",
+      "name": "Sprint 5: Polish & Ship v0.1.0",
+      "description": "Documentation, PyPI publish, examples",
+      "duration_weeks": 2,
+      "status": "backlog",
+      "progress": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Project Setup - Repository & Structure",
+      "phase": "phase-1",
+      "priority": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "estimated_hours": 4,
+      "dependencies": [],
+      "subtasks": [
+        {
+          "id": "subtask-001-1",
+          "title": "Create GitHub repo with README",
+          "completed": false
+        },
+        {
+          "id": "subtask-001-2",
+          "title": "Set up pyproject.toml with Hatch",
+          "completed": true
+        },
+        {
+          "id": "subtask-001-3",
+          "title": "Create agentrace/ package structure",
+          "completed": true
+        },
+        {
+          "id": "subtask-001-4",
+          "title": "Verify pip install -e . works",
+          "completed": true
+        }
+      ],
+      "notes": "pyproject.toml, src/agentrace layout, .gitignore, git init all done. GitHub repo creation pending. Phase 2 added pydantic, deepdiff, rich to dependencies.",
+      "tags": ["setup", "infrastructure"]
+    },
+    {
+      "id": "task-002",
+      "title": "Build simple test LangGraph agent",
+      "phase": "phase-1",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 3,
+      "dependencies": ["task-001"],
+      "subtasks": [
+        {
+          "id": "subtask-002-1",
+          "title": "Create 3-node StateGraph (retriever → processor → generator)",
+          "completed": true
+        },
+        {
+          "id": "subtask-002-2",
+          "title": "Use mock functions (no real LLM)",
+          "completed": true
+        },
+        {
+          "id": "subtask-002-3",
+          "title": "Verify agent runs successfully",
+          "completed": true
+        }
+      ],
+      "notes": "Agent in tests/agents/simple_agent.py. 3 pytest tests passing. Uses TypedDict state, mock nodes, create_simple_agent() factory.",
+      "tags": ["learning", "langgraph"]
+    },
+    {
+      "id": "task-003",
+      "title": "Implement stream-based node capture",
+      "phase": "phase-1",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 4,
+      "dependencies": ["task-002"],
+      "subtasks": [
+        {
+          "id": "subtask-003-1",
+          "title": "Research LangGraph .stream() API and event format",
+          "completed": true
+        },
+        {
+          "id": "subtask-003-2",
+          "title": "Parse stream events to extract node names",
+          "completed": true
+        },
+        {
+          "id": "subtask-003-3",
+          "title": "Capture timestamps (start/end per node)",
+          "completed": true
+        },
+        {
+          "id": "subtask-003-4",
+          "title": "Store in simple data structure (list of dicts)",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/capture.py using stream_mode='updates'. Returns TraceResult dict with nodes, node_names, timing, and accumulated output state.",
+      "tags": ["core", "poc"]
+    },
+    {
+      "id": "task-004",
+      "title": "Basic terminal reporter (text-only)",
+      "phase": "phase-1",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 2,
+      "dependencies": ["task-003"],
+      "subtasks": [
+        {
+          "id": "subtask-004-1",
+          "title": "Format captured nodes as simple text output",
+          "completed": true
+        },
+        {
+          "id": "subtask-004-2",
+          "title": "Show node name + duration in ms",
+          "completed": true
+        },
+        {
+          "id": "subtask-004-3",
+          "title": "Add total execution time",
+          "completed": true
+        }
+      ],
+      "notes": "Originally print()-based in Phase 1. Upgraded to Rich in Phase 2 (task-013).",
+      "tags": ["reporter", "poc"]
+    },
+    {
+      "id": "task-005",
+      "title": "Basic assertion: node_was_visited",
+      "phase": "phase-1",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 2,
+      "dependencies": ["task-003"],
+      "subtasks": [
+        {
+          "id": "subtask-005-1",
+          "title": "Implement assert node_name in visited_nodes",
+          "completed": true
+        },
+        {
+          "id": "subtask-005-2",
+          "title": "Write 2-3 test cases using the assertion",
+          "completed": true
+        },
+        {
+          "id": "subtask-005-3",
+          "title": "Verify tests pass/fail correctly",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/assertions.py. Updated in Phase 2 to support both dict and Trace objects via _get_node_names() helper.",
+      "tags": ["assertions", "poc"]
+    },
+    {
+      "id": "task-006",
+      "title": "PoC Demo & Validation",
+      "phase": "phase-1",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 1,
+      "dependencies": ["task-004", "task-005"],
+      "subtasks": [
+        {
+          "id": "subtask-006-1",
+          "title": "Run end-to-end demo with test agent",
+          "completed": true
+        },
+        {
+          "id": "subtask-006-2",
+          "title": "Verify terminal output shows all visited nodes",
+          "completed": true
+        },
+        {
+          "id": "subtask-006-3",
+          "title": "Verify assertion catches missing nodes",
+          "completed": true
+        }
+      ],
+      "notes": "PoC validated! 14 tests passing. Stream capture, terminal reporter, and assertions all working end-to-end. Decision: continue to Phase 2.",
+      "tags": ["poc", "milestone"]
+    },
+    {
+      "id": "task-007",
+      "title": "Study LangChain BaseCallbackHandler",
+      "phase": "phase-2",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 6,
+      "dependencies": ["task-006"],
+      "subtasks": [
+        {
+          "id": "subtask-007-1",
+          "title": "Read LangChain callback documentation",
+          "completed": true
+        },
+        {
+          "id": "subtask-007-2",
+          "title": "Study example callback implementations",
+          "completed": true
+        },
+        {
+          "id": "subtask-007-3",
+          "title": "Identify key methods: on_chain_start, on_chain_end, on_chain_error",
+          "completed": true
+        },
+        {
+          "id": "subtask-007-4",
+          "title": "Build minimal callback handler (hello world)",
+          "completed": true
+        },
+        {
+          "id": "subtask-007-5",
+          "title": "Test callback with simple LangGraph agent",
+          "completed": true
+        }
+      ],
+      "notes": "Key discovery: on_chain_start receives metadata['langgraph_node'] for node events, but on_chain_end and on_chain_error do NOT get this metadata. Must track run_id→node_name from start events and correlate in end/error. Graph-level events have parent_run_id=None and no langgraph_node. Attach via config={'callbacks': [handler]}.",
+      "tags": ["learning", "callbacks"]
+    },
+    {
+      "id": "task-008",
+      "title": "Define Pydantic models for Trace",
+      "phase": "phase-2",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 4,
+      "dependencies": ["task-006"],
+      "subtasks": [
+        {
+          "id": "subtask-008-1",
+          "title": "Create Trace model (root)",
+          "completed": true
+        },
+        {
+          "id": "subtask-008-2",
+          "title": "Create NodeExecution model",
+          "completed": true
+        },
+        {
+          "id": "subtask-008-3",
+          "title": "Create EdgeTransition model",
+          "completed": true
+        },
+        {
+          "id": "subtask-008-4",
+          "title": "Create RunMetadata model",
+          "completed": true
+        },
+        {
+          "id": "subtask-008-5",
+          "title": "Add validation and serialization tests",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/core/models.py. Models: NodeStatus(enum), NodeExecution, EdgeTransition, RunMetadata, Trace. Trace has properties: node_names, successful, get_node(name). All models support model_dump_json() serialization. Tested in tests/test_wrap.py.",
+      "tags": ["architecture", "pydantic"]
+    },
+    {
+      "id": "task-009",
+      "title": "Implement Interceptor (BaseCallbackHandler)",
+      "phase": "phase-2",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 8,
+      "dependencies": ["task-007", "task-008"],
+      "subtasks": [
+        {
+          "id": "subtask-009-1",
+          "title": "Create interceptor.py with BaseCallbackHandler subclass",
+          "completed": true
+        },
+        {
+          "id": "subtask-009-2",
+          "title": "Implement on_chain_start (capture node entry)",
+          "completed": true
+        },
+        {
+          "id": "subtask-009-3",
+          "title": "Implement on_chain_end (capture node exit + timing)",
+          "completed": true
+        },
+        {
+          "id": "subtask-009-4",
+          "title": "Implement on_chain_error (capture failures)",
+          "completed": true
+        },
+        {
+          "id": "subtask-009-5",
+          "title": "Handle edge transitions",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/core/interceptor.py as TraceInterceptor(BaseCallbackHandler). Uses run_id→node_name tracking from on_chain_start to correlate with on_chain_end/on_chain_error (which don't receive langgraph_node metadata). Tracks accumulated state, computes diffs via deepdiff, creates EdgeTransitions between consecutive nodes. Handles graph-level errors by finalizing trace on on_chain_error when run_id matches graph run.",
+      "tags": ["core", "callbacks"]
+    },
+    {
+      "id": "task-010",
+      "title": "Wire up core module exports and update __init__.py",
+      "phase": "phase-2",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 6,
+      "dependencies": ["task-009"],
+      "subtasks": [
+        {
+          "id": "subtask-010-1",
+          "title": "Create src/agentrace/core/__init__.py with all exports",
+          "completed": true
+        },
+        {
+          "id": "subtask-010-2",
+          "title": "Update src/agentrace/__init__.py to export wrap and Trace",
+          "completed": true
+        },
+        {
+          "id": "subtask-010-3",
+          "title": "Update assertions.py to support both dict and Trace objects",
+          "completed": true
+        },
+        {
+          "id": "subtask-010-4",
+          "title": "Verify backward compatibility with Phase 1 capture() API",
+          "completed": true
+        }
+      ],
+      "notes": "Redesigned from original plan: instead of a separate TraceCollector class, the TraceInterceptor builds the Trace directly (simpler architecture). Core __init__.py exports all models + interceptor + wrapper. Main __init__.py exports wrap, Trace alongside legacy capture. assertions.py uses _get_node_names() helper for dual dict/Trace support.",
+      "tags": ["core", "architecture"]
+    },
+    {
+      "id": "task-011",
+      "title": "Implement state differ",
+      "phase": "phase-2",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 4,
+      "dependencies": ["task-010"],
+      "subtasks": [
+        {
+          "id": "subtask-011-1",
+          "title": "Install and study deepdiff library",
+          "completed": true
+        },
+        {
+          "id": "subtask-011-2",
+          "title": "Create differ.py with state comparison logic",
+          "completed": true
+        },
+        {
+          "id": "subtask-011-3",
+          "title": "Format diffs in human-readable way",
+          "completed": true
+        },
+        {
+          "id": "subtask-011-4",
+          "title": "Add diff to NodeExecution model",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/core/differ.py. compute_state_diff(before, after) returns {'added': {...}, 'changed': {...}, 'removed': {...}} or None if identical. Uses DeepDiff with verbose_level=2. Handles dictionary_item_added/removed, values_changed, type_changes, iterable_item_added/removed. _extract_key() converts DeepDiff paths (root['key']) to readable dot notation.",
+      "tags": ["core", "diffing"]
+    },
+    {
+      "id": "task-012",
+      "title": "Implement agentrace.wrap() API",
+      "phase": "phase-2",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 3,
+      "dependencies": ["task-010"],
+      "subtasks": [
+        {
+          "id": "subtask-012-1",
+          "title": "Create TracedGraph class in core/wrapper.py",
+          "completed": true
+        },
+        {
+          "id": "subtask-012-2",
+          "title": "Implement .invoke() with callback injection",
+          "completed": true
+        },
+        {
+          "id": "subtask-012-3",
+          "title": "Implement .stream() with callback injection",
+          "completed": true
+        },
+        {
+          "id": "subtask-012-4",
+          "title": "Expose .last_trace property",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/core/wrapper.py. TracedGraph wraps compiled graph, injects TraceInterceptor into callbacks on each invoke()/stream() call. _merge_callbacks() preserves existing user callbacks. wrap() is the public factory. invoke() uses try/except to store trace even on error before re-raising.",
+      "tags": ["api", "core"]
+    },
+    {
+      "id": "task-013",
+      "title": "Upgrade terminal reporter with Rich",
+      "phase": "phase-2",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 4,
+      "dependencies": ["task-011", "task-012"],
+      "subtasks": [
+        {
+          "id": "subtask-013-1",
+          "title": "Install Rich library",
+          "completed": true
+        },
+        {
+          "id": "subtask-013-2",
+          "title": "Create rich-formatted tree view of execution",
+          "completed": true
+        },
+        {
+          "id": "subtask-013-3",
+          "title": "Color-code nodes (green=ok, red=error)",
+          "completed": true
+        },
+        {
+          "id": "subtask-013-4",
+          "title": "Show state diffs per node (detailed mode)",
+          "completed": true
+        },
+        {
+          "id": "subtask-013-5",
+          "title": "Support both legacy dict and Trace model objects",
+          "completed": true
+        }
+      ],
+      "notes": "Updated src/agentrace/reporters/terminal.py. print_trace() now accepts optional detailed=False and console=None params. Uses Rich Panel, Tree, and Table. _print_dict_trace() for legacy dicts, _print_model_trace() for Trace objects. detailed=True shows JSON state diffs per node + timing table. Green OK/Red ERR icons per node status. Subtitle shows SUCCESS/FAILED + node count + duration.",
+      "tags": ["reporter", "ui"]
+    },
+    {
+      "id": "task-014",
+      "title": "Migration verification & cleanup",
+      "phase": "phase-2",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 3,
+      "dependencies": ["task-013"],
+      "subtasks": [
+        {
+          "id": "subtask-014-1",
+          "title": "Keep PoC capture() API for backward compatibility",
+          "completed": true
+        },
+        {
+          "id": "subtask-014-2",
+          "title": "Verify all Phase 1 tests still pass (backward compat)",
+          "completed": true
+        },
+        {
+          "id": "subtask-014-3",
+          "title": "Create comprehensive Phase 2 test suite (tests/test_wrap.py)",
+          "completed": true
+        }
+      ],
+      "notes": "Decision: kept PoC stream-parsing code (capture.py) for backward compatibility instead of removing it. Updated old terminal reporter test to use Rich Console with StringIO buffer. 42 total tests passing (14 Phase 1 + 28 Phase 2). Phase 2 tests cover: TracedGraph.invoke/stream, Trace model properties, state diffs, edge transitions, error handling (node that raises → ERROR status captured), Pydantic serialization (model_dump_json), assertions with Trace, Rich reporter (basic + detailed + legacy dict).",
+      "tags": ["refactor", "milestone"]
+    },
+    {
+      "id": "task-015",
+      "title": "Implement core assertion functions",
+      "phase": "phase-3",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 6,
+      "dependencies": ["task-014"],
+      "subtasks": [
+        {
+          "id": "subtask-015-1",
+          "title": "node_was_visited(trace, node_name)",
+          "completed": true
+        },
+        {
+          "id": "subtask-015-2",
+          "title": "node_was_not_visited(trace, node_name)",
+          "completed": true
+        },
+        {
+          "id": "subtask-015-3",
+          "title": "node_visited_before(trace, node_a, node_b)",
+          "completed": true
+        },
+        {
+          "id": "subtask-015-4",
+          "title": "edge_taken(trace, from_node, to_node)",
+          "completed": true
+        },
+        {
+          "id": "subtask-015-5",
+          "title": "no_errors(trace)",
+          "completed": true
+        },
+        {
+          "id": "subtask-015-6",
+          "title": "total_nodes_visited(trace, min, max)",
+          "completed": true
+        }
+      ],
+      "notes": "All 6 core assertions implemented in src/agentrace/assertions.py. All support both dict and Trace objects via helper functions. 15 new tests added to test_wrap.py. 70 total tests passing.",
+      "tags": ["assertions", "testing"]
+    },
+    {
+      "id": "task-016",
+      "title": "Advanced assertion functions",
+      "phase": "phase-3",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 4,
+      "dependencies": ["task-015"],
+      "subtasks": [
+        {
+          "id": "subtask-016-1",
+          "title": "state_at_node(trace, node, predicate)",
+          "completed": true
+        },
+        {
+          "id": "subtask-016-2",
+          "title": "max_duration(trace, node, ms)",
+          "completed": true
+        },
+        {
+          "id": "subtask-016-3",
+          "title": "Custom assertion error messages (actionable)",
+          "completed": true
+        }
+      ],
+      "notes": "state_at_node accepts a predicate function on node output state. max_duration checks node execution time against a threshold. All assertion errors include actionable context (visited nodes, execution order, state, etc). 5 new tests added.",
+      "tags": ["assertions", "testing"]
+    },
+    {
+      "id": "task-017",
+      "title": "Create pytest plugin",
+      "phase": "phase-3",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 5,
+      "dependencies": ["task-015"],
+      "subtasks": [
+        {
+          "id": "subtask-017-1",
+          "title": "Study pytest plugin architecture",
+          "completed": true
+        },
+        {
+          "id": "subtask-017-2",
+          "title": "Create plugin.py with fixtures",
+          "completed": true
+        },
+        {
+          "id": "subtask-017-3",
+          "title": "Implement traced_app fixture",
+          "completed": true
+        },
+        {
+          "id": "subtask-017-4",
+          "title": "Add @pytest.mark.agentrace marker",
+          "completed": true
+        },
+        {
+          "id": "subtask-017-5",
+          "title": "Test plugin with sample test suite",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/plugin.py. Registered via pyproject.toml pytest11 entry point. Provides: traced_agent fixture (factory pattern), agentrace_report fixture (auto-print traces), @pytest.mark.agentrace marker. 6 plugin tests in tests/test_plugin.py.",
+      "tags": ["pytest", "testing"]
+    },
+    {
+      "id": "task-018",
+      "title": "Implement Mermaid diagram generator",
+      "phase": "phase-3",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 5,
+      "dependencies": ["task-014"],
+      "subtasks": [
+        {
+          "id": "subtask-018-1",
+          "title": "Study Mermaid graph syntax",
+          "completed": true
+        },
+        {
+          "id": "subtask-018-2",
+          "title": "Create mermaid.py reporter",
+          "completed": true
+        },
+        {
+          "id": "subtask-018-3",
+          "title": "Generate graph from Trace (nodes + edges)",
+          "completed": true
+        },
+        {
+          "id": "subtask-018-4",
+          "title": "Color nodes by status (green/red/yellow)",
+          "completed": true
+        },
+        {
+          "id": "subtask-018-5",
+          "title": "Add timing annotations on edges",
+          "completed": true
+        },
+        {
+          "id": "subtask-018-6",
+          "title": "Implement trace.to_mermaid() method",
+          "completed": true
+        }
+      ],
+      "notes": "Implemented in src/agentrace/reporters/mermaid.py. to_mermaid() generates flowchart with START/END circles, node boxes with timing labels, edges, and color-coded styles (green for success, red for error). Supports TD/LR directions. Trace.to_mermaid() convenience method added. Exported from agentrace package. 8 new tests.",
+      "tags": ["reporter", "visualization"]
+    },
+    {
+      "id": "task-019",
+      "title": "Comprehensive test suite",
+      "phase": "phase-3",
+      "priority": "critical",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 8,
+      "dependencies": ["task-017", "task-018"],
+      "subtasks": [
+        {
+          "id": "subtask-019-1",
+          "title": "Create multi-node test agent with conditional routing",
+          "completed": true
+        },
+        {
+          "id": "subtask-019-2",
+          "title": "Write tests for all assertion functions",
+          "completed": true
+        },
+        {
+          "id": "subtask-019-3",
+          "title": "Write tests for all reporters",
+          "completed": true
+        },
+        {
+          "id": "subtask-019-4",
+          "title": "Test async LangGraph support",
+          "completed": false
+        },
+        {
+          "id": "subtask-019-5",
+          "title": "Test error handling scenarios",
+          "completed": true
+        },
+        {
+          "id": "subtask-019-6",
+          "title": "Achieve >80% code coverage",
+          "completed": true
+        }
+      ],
+      "notes": "104 total tests passing. 90% code coverage (real, excluding pytest-cov plugin import ordering issue). Created routing_agent.py test agent with conditional edges. Tests cover: conditional routing (3 routes), assertion edge cases, differ edge cases, serialization roundtrip, model construction, stream mode, Mermaid edge cases. Async LangGraph support deferred (not critical for MVP).",
+      "tags": ["testing", "quality"]
+    },
+    {
+      "id": "task-020",
+      "title": "MVP Demo & Documentation",
+      "phase": "phase-3",
+      "priority": "high",
+      "status": "done",
+      "progress": 100,
+      "estimated_hours": 4,
+      "dependencies": ["task-019"],
+      "subtasks": [
+        {
+          "id": "subtask-020-1",
+          "title": "Create example: simple chatbot (3 nodes)",
+          "completed": true
+        },
+        {
+          "id": "subtask-020-2",
+          "title": "Create example: RAG agent with routing",
+          "completed": true
+        },
+        {
+          "id": "subtask-020-3",
+          "title": "Write README quick start guide",
+          "completed": true
+        },
+        {
+          "id": "subtask-020-4",
+          "title": "Record demo GIF/video",
+          "completed": false
+        }
+      ],
+      "notes": "Created examples/simple_chatbot.py and examples/rag_with_routing.py. Rewrote readme.md from blueprint to proper quick-start README with usage examples, feature table, comparison table. Demo GIF deferred (requires manual recording).",
+      "tags": ["documentation", "milestone"]
+    },
+    {
+      "id": "task-021",
+      "title": "HTML Reporter Implementation",
+      "phase": "sprint-4",
+      "priority": "medium",
+      "status": "backlog",
+      "progress": 0,
+      "estimated_hours": 8,
+      "dependencies": ["task-020"],
+      "subtasks": [
+        {
+          "id": "subtask-021-1",
+          "title": "Design HTML template structure",
+          "completed": false
+        },
+        {
+          "id": "subtask-021-2",
+          "title": "Embed Mermaid diagram in HTML",
+          "completed": false
+        },
+        {
+          "id": "subtask-021-3",
+          "title": "Create expandable node details",
+          "completed": false
+        },
+        {
+          "id": "subtask-021-4",
+          "title": "Add summary statistics section",
+          "completed": false
+        },
+        {
+          "id": "subtask-021-5",
+          "title": "Make self-contained (no external deps)",
+          "completed": false
+        }
+      ],
+      "notes": "Future: Interactive HTML reports",
+      "tags": ["reporter", "backlog"]
+    },
+    {
+      "id": "task-022",
+      "title": "JSON & JUnit Reporters",
+      "phase": "sprint-4",
+      "priority": "medium",
+      "status": "backlog",
+      "progress": 0,
+      "estimated_hours": 4,
+      "dependencies": ["task-020"],
+      "subtasks": [
+        {
+          "id": "subtask-022-1",
+          "title": "Implement JSON reporter (Trace → JSON)",
+          "completed": false
+        },
+        {
+          "id": "subtask-022-2",
+          "title": "Study JUnit XML schema",
+          "completed": false
+        },
+        {
+          "id": "subtask-022-3",
+          "title": "Implement JUnit XML reporter",
+          "completed": false
+        },
+        {
+          "id": "subtask-022-4",
+          "title": "Test with GitHub Actions",
+          "completed": false
+        }
+      ],
+      "notes": "Future: CI/CD integration formats. Note: Pydantic model_dump_json() already provides basic JSON export.",
+      "tags": ["reporter", "ci-cd", "backlog"]
+    },
+    {
+      "id": "task-023",
+      "title": "GitHub Actions CI/CD Setup",
+      "phase": "sprint-4",
+      "priority": "medium",
+      "status": "backlog",
+      "progress": 0,
+      "estimated_hours": 6,
+      "dependencies": ["task-001"],
+      "subtasks": [
+        {
+          "id": "subtask-023-1",
+          "title": "Configure ruff, mypy workflows",
+          "completed": false
+        },
+        {
+          "id": "subtask-023-2",
+          "title": "Configure pytest workflow with coverage",
+          "completed": false
+        },
+        {
+          "id": "subtask-023-3",
+          "title": "Set up test matrix (Python 3.10, 3.11, 3.12)",
+          "completed": false
+        },
+        {
+          "id": "subtask-023-4",
+          "title": "Add artifact upload for reports",
+          "completed": false
+        }
+      ],
+      "notes": "Future: Professional CI/CD pipeline",
+      "tags": ["ci-cd", "infrastructure", "backlog"]
+    },
+    {
+      "id": "task-024",
+      "title": "Documentation Site with mkdocs",
+      "phase": "sprint-5",
+      "priority": "low",
+      "status": "backlog",
+      "progress": 0,
+      "estimated_hours": 10,
+      "dependencies": ["task-020"],
+      "subtasks": [
+        {
+          "id": "subtask-024-1",
+          "title": "Set up mkdocs-material",
+          "completed": false
+        },
+        {
+          "id": "subtask-024-2",
+          "title": "Write Getting Started guide",
+          "completed": false
+        },
+        {
+          "id": "subtask-024-3",
+          "title": "Generate API reference from docstrings",
+          "completed": false
+        },
+        {
+          "id": "subtask-024-4",
+          "title": "Create Examples page",
+          "completed": false
+        },
+        {
+          "id": "subtask-024-5",
+          "title": "Write CI/CD integration guide",
+          "completed": false
+        }
+      ],
+      "notes": "Future: Professional documentation",
+      "tags": ["documentation", "backlog"]
+    },
+    {
+      "id": "task-025",
+      "title": "PyPI Publishing Setup",
+      "phase": "sprint-5",
+      "priority": "low",
+      "status": "backlog",
+      "progress": 0,
+      "estimated_hours": 4,
+      "dependencies": ["task-023"],
+      "subtasks": [
+        {
+          "id": "subtask-025-1",
+          "title": "Configure GitHub trusted publishing",
+          "completed": false
+        },
+        {
+          "id": "subtask-025-2",
+          "title": "Create release workflow",
+          "completed": false
+        },
+        {
+          "id": "subtask-025-3",
+          "title": "Test publish to TestPyPI",
+          "completed": false
+        },
+        {
+          "id": "subtask-025-4",
+          "title": "Publish v0.1.0 to PyPI",
+          "completed": false
+        }
+      ],
+      "notes": "Future: Public package release",
+      "tags": ["publishing", "backlog"]
+    }
+  ],
+  "session_history": [
+    {
+      "date": "2026-02-15",
+      "session_number": 1,
+      "summary": "Initial project planning. Decided on hybrid 3-phase approach (PoC → Callbacks → MVP) with full blueprint in backlog. Created project tracker system.",
+      "decisions": [
+        "Use hybrid approach: fast PoC for validation, then learn callbacks properly",
+        "Prioritize visual flow (A) + assertions (C) for MVP",
+        "Build interactive HTML tracker with timeline + priority list views",
+        "Claude estimates progress based on subtasks + conversational inference"
+      ],
+      "next_session_goals": [
+        "Start Phase 1: Project setup (task-001)",
+        "Create simple test agent (task-002)"
+      ]
+    },
+    {
+      "date": "2026-02-15",
+      "session_number": 2,
+      "summary": "Completed Phase 1 setup. Created project structure (pyproject.toml, src/agentrace layout, .gitignore, git init). Built 3-node test agent (retriever→processor→generator) with mock functions. All 3 pytest tests passing. Package installs and imports correctly.",
+      "decisions": [
+        "Used src/ layout for package structure",
+        "Used Hatchling as build backend",
+        "Test agent uses TypedDict state (not Pydantic) for simplicity",
+        "Agent placed in tests/agents/ directory with factory function pattern"
+      ],
+      "tasks_updated": ["task-001", "task-002"],
+      "next_session_goals": [
+        "Implement stream-based node capture (task-003)",
+        "Build basic terminal reporter (task-004)",
+        "Create GitHub repo (subtask-001-1)"
+      ]
+    },
+    {
+      "date": "2026-02-15",
+      "session_number": 3,
+      "summary": "Completed entire Phase 1 PoC. Implemented stream-based capture using LangGraph stream_mode='updates', basic terminal reporter with print(), and node_was_visited assertion. 14 tests passing. End-to-end demo validated.",
+      "decisions": [
+        "Used stream_mode='updates' for PoC (yields {node_name: output} per step)",
+        "Timestamps captured via time.perf_counter() (approximate, not from stream events)",
+        "TraceResult is a plain dict (Pydantic models come in Phase 2)",
+        "PoC validated - proceeding to Phase 2"
+      ],
+      "tasks_updated": ["task-003", "task-004", "task-005", "task-006"],
+      "next_session_goals": [
+        "Study LangChain BaseCallbackHandler (task-007)",
+        "Define Pydantic models for Trace (task-008)",
+        "Create GitHub repo (subtask-001-1)"
+      ]
+    },
+    {
+      "date": "2026-02-15",
+      "session_number": 4,
+      "summary": "Completed entire Phase 2: Callback-Based Architecture. Implemented all 8 tasks (007-014). Added pydantic, deepdiff, rich dependencies. Created Pydantic models (Trace, NodeExecution, EdgeTransition, RunMetadata, NodeStatus). Built TraceInterceptor callback handler with run_id→node_name correlation (key discovery: on_chain_end doesn't receive langgraph_node metadata). Created state differ using deepdiff. Built TracedGraph wrapper with wrap() factory supporting invoke() and stream(). Upgraded terminal reporter to Rich with Panel/Tree/Table views and detailed mode. Updated assertions and exports for backward compatibility. 42 tests passing (14 Phase 1 + 28 Phase 2).",
+      "decisions": [
+        "Merged TraceCollector into TraceInterceptor (simpler architecture than planned)",
+        "Kept Phase 1 capture() API for backward compatibility instead of removing it",
+        "TraceInterceptor tracks run_id→node_name from on_chain_start because on_chain_end/on_chain_error don't receive langgraph_node metadata",
+        "TracedGraph.invoke() uses try/except to preserve trace even when graph raises",
+        "Rich reporter accepts optional Console param for testability",
+        "Updated task-010 scope: became 'wire up exports' instead of separate TraceCollector",
+        "Updated task-014 subtask-014-1: 'keep PoC code' instead of 'remove PoC code'"
+      ],
+      "tasks_updated": ["task-007", "task-008", "task-009", "task-010", "task-011", "task-012", "task-013", "task-014"],
+      "next_session_goals": [
+        "Start Phase 3: core assertion functions (task-015)",
+        "Implement Mermaid diagram generator (task-018)",
+        "Create GitHub repo (subtask-001-1)"
+      ]
+    },
+    {
+      "date": "2026-02-17",
+      "session_number": 5,
+      "summary": "Completed 3 Phase 3 tasks: core assertions (task-015), advanced assertions (task-016), and Mermaid diagram generator (task-018). Added 8 assertion functions to assertions.py (node_was_visited, node_was_not_visited, node_visited_before, edge_taken, no_errors, total_nodes_visited, state_at_node, max_duration). Created mermaid.py reporter with to_mermaid() function and Trace.to_mermaid() convenience method. All assertions support both dict and Trace objects. 70 tests passing (42 previous + 28 new).",
+      "decisions": [
+        "All assertion helpers (_get_node_names, _get_edges, etc.) support dual dict/Trace format",
+        "state_at_node uses predicate function pattern for flexible state validation",
+        "Mermaid output uses flowchart with START/END circles and color-coded nodes",
+        "to_mermaid exported from agentrace package as top-level API"
+      ],
+      "tasks_updated": ["task-015", "task-016", "task-018"],
+      "next_session_goals": [
+        "Create pytest plugin (task-017)",
+        "Comprehensive test suite (task-019)",
+        "Create GitHub repo (subtask-001-1)"
+      ]
+    },
+    {
+      "date": "2026-02-17",
+      "session_number": 6,
+      "summary": "Completed all Phase 3 tasks. Built pytest plugin (task-017) with traced_agent fixture, agentrace_report fixture, and @pytest.mark.agentrace marker. Created comprehensive test suite (task-019) with routing agent, 104 total tests, 90% coverage. Created MVP demos (task-020): examples/simple_chatbot.py, examples/rag_with_routing.py, rewrote README with quick start guide. Phase 3 is now DONE. MVP complete!",
+      "decisions": [
+        "pytest plugin registered via pyproject.toml entry-points.pytest11",
+        "traced_agent uses factory pattern for flexibility",
+        "Async LangGraph testing deferred (not critical for MVP)",
+        "Demo GIF recording deferred (requires manual work)",
+        "README rewritten from blueprint to proper quick-start format"
+      ],
+      "tasks_updated": ["task-017", "task-019", "task-020"],
+      "next_session_goals": [
+        "Create GitHub repo (subtask-001-1)",
+        "Start Sprint 4: HTML Reporter (task-021)",
+        "Consider initial git commit and push"
+      ]
+    }
+  ],
+  "metadata": {
+    "last_updated": "2026-02-17T14:00:00Z",
+    "version": "1.5",
+    "total_tasks": 25,
+    "total_estimated_hours": 132
+  }
+}
