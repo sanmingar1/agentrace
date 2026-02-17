@@ -27,6 +27,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-asyncio",
     "pytest-cov",
     "ruff",
 ]
@@ -43,6 +44,7 @@ packages = ["src/agentrace"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.ruff]
 target-version = "py310"
