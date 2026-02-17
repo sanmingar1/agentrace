@@ -43,8 +43,8 @@
       "name": "Sprint 5: Polish & Ship v0.1.0",
       "description": "Documentation, PyPI publish, examples",
       "duration_weeks": 2,
-      "status": "backlog",
-      "progress": 0
+      "status": "done",
+      "progress": 90
     }
   ],
   "tasks": [
@@ -865,59 +865,59 @@
       "title": "Documentation Site with mkdocs",
       "phase": "sprint-5",
       "priority": "low",
-      "status": "backlog",
-      "progress": 0,
+      "status": "done",
+      "progress": 100,
       "estimated_hours": 10,
       "dependencies": ["task-020"],
       "subtasks": [
         {
           "id": "subtask-024-1",
           "title": "Set up mkdocs-material",
-          "completed": false
+          "completed": true
         },
         {
           "id": "subtask-024-2",
           "title": "Write Getting Started guide",
-          "completed": false
+          "completed": true
         },
         {
           "id": "subtask-024-3",
           "title": "Generate API reference from docstrings",
-          "completed": false
+          "completed": true
         },
         {
           "id": "subtask-024-4",
           "title": "Create Examples page",
-          "completed": false
+          "completed": true
         },
         {
           "id": "subtask-024-5",
           "title": "Write CI/CD integration guide",
-          "completed": false
+          "completed": true
         }
       ],
-      "notes": "Future: Professional documentation",
-      "tags": ["documentation", "backlog"]
+      "notes": "mkdocs.yml configured with material theme (dark/light toggle). 5 docs pages: index, getting-started, api-reference, examples, ci-cd. API reference covers all public functions, assertions, Trace model, and pytest plugin. Mermaid rendering support via pymdownx.superfences.",
+      "tags": ["documentation"]
     },
     {
       "id": "task-025",
       "title": "PyPI Publishing Setup",
       "phase": "sprint-5",
       "priority": "low",
-      "status": "backlog",
-      "progress": 0,
+      "status": "done",
+      "progress": 75,
       "estimated_hours": 4,
       "dependencies": ["task-023"],
       "subtasks": [
         {
           "id": "subtask-025-1",
           "title": "Configure GitHub trusted publishing",
-          "completed": false
+          "completed": true
         },
         {
           "id": "subtask-025-2",
           "title": "Create release workflow",
-          "completed": false
+          "completed": true
         },
         {
           "id": "subtask-025-3",
@@ -930,8 +930,8 @@
           "completed": false
         }
       ],
-      "notes": "Future: Public package release",
-      "tags": ["publishing", "backlog"]
+      "notes": "GitHub Actions workflow in .github/workflows/publish.yml using pypa/gh-action-pypi-publish with trusted publishing (OIDC). Triggers on GitHub Release. Actual TestPyPI test and PyPI publish require manual GitHub Release creation and PyPI trusted publisher configuration.",
+      "tags": ["publishing"]
     }
   ],
   "session_history": [
@@ -1038,11 +1038,30 @@
         "Start Sprint 4: HTML Reporter (task-021)",
         "Consider initial git commit and push"
       ]
+    },
+    {
+      "date": "2026-02-17",
+      "session_number": 7,
+      "summary": "Completed Sprint 4 and Sprint 5. Pushed all code to GitHub (https://github.com/sanmingar1/agentrace.git). Sprint 4: HTML reporter (dark theme, Mermaid, expandable nodes), JSON reporter, JUnit XML reporter, GitHub Actions CI/CD (lint + test matrix 3.10-3.12). Sprint 5: mkdocs-material documentation (5 pages), PyPI publish workflow. Ruff linting applied to entire codebase. 127 tests passing. ALL 25 planned tasks are now complete (or nearly complete). Project is feature-complete for v0.1.0.",
+      "decisions": [
+        "HTML reporter uses CDN Mermaid JS (not fully self-contained, but practical)",
+        "JUnit XML treats each node as a testcase, errors become <error> elements",
+        "Ruff configured for py310, line-length 100, isort + pyflakes + pycodestyle",
+        "PyPI publish uses GitHub trusted publishing (OIDC) via pypa/gh-action-pypi-publish",
+        "mkdocs-material with dark/light toggle and Mermaid rendering support"
+      ],
+      "tasks_updated": ["task-001", "task-021", "task-022", "task-023", "task-024", "task-025"],
+      "next_session_goals": [
+        "Configure PyPI trusted publisher on pypi.org",
+        "Create GitHub Release to trigger publish workflow",
+        "Deploy mkdocs to GitHub Pages",
+        "Record demo GIF for README"
+      ]
     }
   ],
   "metadata": {
-    "last_updated": "2026-02-17T14:00:00Z",
-    "version": "1.5",
+    "last_updated": "2026-02-17T16:00:00Z",
+    "version": "1.6",
     "total_tasks": 25,
     "total_estimated_hours": 132
   }
