@@ -3,7 +3,7 @@
     "name": "agentrace",
     "description": "Debug & Trace Library for LangGraph Agents",
     "start_date": "2026-02-15",
-    "current_phase": "Phase 3: MVP Complete"
+    "current_phase": "Post-MVP: v0.1.0 Ready — Next: async support, badges, GH Pages"
   },
   "phases": [
     {
@@ -932,6 +932,89 @@
       ],
       "notes": "GitHub Actions workflow in .github/workflows/publish.yml using pypa/gh-action-pypi-publish with trusted publishing (OIDC). Triggers on GitHub Release. Actual TestPyPI test and PyPI publish require manual GitHub Release creation and PyPI trusted publisher configuration.",
       "tags": ["publishing"]
+    },
+    {
+      "id": "task-026",
+      "title": "Add README badges",
+      "phase": "post-mvp",
+      "priority": "medium",
+      "status": "not_started",
+      "progress": 0,
+      "estimated_hours": 1,
+      "dependencies": [],
+      "subtasks": [
+        { "id": "subtask-026-1", "title": "CI status badge (GitHub Actions)", "completed": false },
+        { "id": "subtask-026-2", "title": "Python version badge", "completed": false },
+        { "id": "subtask-026-3", "title": "License badge", "completed": false },
+        { "id": "subtask-026-4", "title": "Test count / coverage badge", "completed": false }
+      ],
+      "notes": "",
+      "tags": ["documentation", "polish"]
+    },
+    {
+      "id": "task-027",
+      "title": "GitHub Pages docs deployment",
+      "phase": "post-mvp",
+      "priority": "medium",
+      "status": "not_started",
+      "progress": 0,
+      "estimated_hours": 2,
+      "dependencies": ["task-024"],
+      "subtasks": [
+        { "id": "subtask-027-1", "title": "Add mkdocs gh-deploy workflow", "completed": false },
+        { "id": "subtask-027-2", "title": "Configure GitHub Pages source to gh-pages branch", "completed": false }
+      ],
+      "notes": "",
+      "tags": ["documentation", "ci-cd"]
+    },
+    {
+      "id": "task-028",
+      "title": "Async LangGraph support",
+      "phase": "post-mvp",
+      "priority": "high",
+      "status": "not_started",
+      "progress": 0,
+      "estimated_hours": 5,
+      "dependencies": ["task-014"],
+      "subtasks": [
+        { "id": "subtask-028-1", "title": "Implement ainvoke() on TracedGraph", "completed": false },
+        { "id": "subtask-028-2", "title": "Implement astream() on TracedGraph", "completed": false },
+        { "id": "subtask-028-3", "title": "Write async tests", "completed": false }
+      ],
+      "notes": "Deferred from task-019. LangGraph supports async execution via ainvoke/astream.",
+      "tags": ["core", "async"]
+    },
+    {
+      "id": "task-029",
+      "title": "Add py.typed marker and improve type hints",
+      "phase": "post-mvp",
+      "priority": "low",
+      "status": "not_started",
+      "progress": 0,
+      "estimated_hours": 2,
+      "dependencies": [],
+      "subtasks": [
+        { "id": "subtask-029-1", "title": "Add py.typed file (PEP 561)", "completed": false },
+        { "id": "subtask-029-2", "title": "Improve type hints across public API", "completed": false }
+      ],
+      "notes": "Makes agentrace compatible with mypy/pyright consumers.",
+      "tags": ["quality", "typing"]
+    },
+    {
+      "id": "task-030",
+      "title": "CHANGELOG and versioning",
+      "phase": "post-mvp",
+      "priority": "low",
+      "status": "not_started",
+      "progress": 0,
+      "estimated_hours": 1,
+      "dependencies": [],
+      "subtasks": [
+        { "id": "subtask-030-1", "title": "Create CHANGELOG.md with v0.1.0 entry", "completed": false },
+        { "id": "subtask-030-2", "title": "Add Keep a Changelog format", "completed": false }
+      ],
+      "notes": "Standard open-source practice for tracking releases.",
+      "tags": ["documentation", "release"]
     }
   ],
   "session_history": [
@@ -1057,12 +1140,28 @@
         "Deploy mkdocs to GitHub Pages",
         "Record demo GIF for README"
       ]
+    },
+    {
+      "date": "2026-02-17",
+      "session_number": 8,
+      "summary": "Fixed CI/CD pipeline failures. Two bugs: (1) ruff format was never applied — only ruff check ran locally, so format --check failed in CI. Fixed by running ruff format on all 13 files. (2) Test job used -p no:agentrace which disabled the pytest plugin, so traced_agent fixture was not found in test_plugin.py. Fixed by removing -p no:agentrace from pytest command. All 4 CI jobs now pass: lint + test (3.10, 3.11, 3.12). Planning updated: added new post-v0.1.0 tasks (task-026 to task-030).",
+      "decisions": [
+        "ruff format is separate from ruff check — both must be run in CI",
+        "-p no:agentrace is only useful for coverage measurement, not for general test runs",
+        "Plugin tests should run with the plugin active so fixtures are available"
+      ],
+      "tasks_updated": ["ci-fix"],
+      "next_session_goals": [
+        "Add README badges (task-026)",
+        "Add GitHub Pages docs deployment (task-027)",
+        "Implement async LangGraph support (task-028)"
+      ]
     }
   ],
   "metadata": {
-    "last_updated": "2026-02-17T16:00:00Z",
-    "version": "1.6",
-    "total_tasks": 25,
-    "total_estimated_hours": 132
+    "last_updated": "2026-02-17T17:00:00Z",
+    "version": "1.7",
+    "total_tasks": 30,
+    "total_estimated_hours": 149
   }
 }
