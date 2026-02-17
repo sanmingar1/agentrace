@@ -7,7 +7,7 @@ All nodes are mock functions (no LLM calls).
 
 from typing import TypedDict
 
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, START, StateGraph
 
 
 class AgentState(TypedDict):
