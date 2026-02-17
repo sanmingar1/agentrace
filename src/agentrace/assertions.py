@@ -51,10 +51,7 @@ def node_was_visited(trace: Any, node_name: str) -> None:
     """Assert that a node was visited during execution."""
     visited = _get_node_names(trace)
     if node_name not in visited:
-        raise AssertionError(
-            f"Node '{node_name}' was NOT visited.\n"
-            f"Visited nodes: {visited}"
-        )
+        raise AssertionError(f"Node '{node_name}' was NOT visited.\nVisited nodes: {visited}")
 
 
 def node_was_not_visited(trace: Any, node_name: str) -> None:
@@ -62,8 +59,7 @@ def node_was_not_visited(trace: Any, node_name: str) -> None:
     visited = _get_node_names(trace)
     if node_name in visited:
         raise AssertionError(
-            f"Node '{node_name}' WAS visited but should not have been.\n"
-            f"Visited nodes: {visited}"
+            f"Node '{node_name}' WAS visited but should not have been.\nVisited nodes: {visited}"
         )
 
 
@@ -71,15 +67,9 @@ def node_visited_before(trace: Any, node_a: str, node_b: str) -> None:
     """Assert that node_a was visited before node_b."""
     visited = _get_node_names(trace)
     if node_a not in visited:
-        raise AssertionError(
-            f"Node '{node_a}' was NOT visited.\n"
-            f"Visited nodes: {visited}"
-        )
+        raise AssertionError(f"Node '{node_a}' was NOT visited.\nVisited nodes: {visited}")
     if node_b not in visited:
-        raise AssertionError(
-            f"Node '{node_b}' was NOT visited.\n"
-            f"Visited nodes: {visited}"
-        )
+        raise AssertionError(f"Node '{node_b}' was NOT visited.\nVisited nodes: {visited}")
     idx_a = visited.index(node_a)
     idx_b = visited.index(node_b)
     if idx_a >= idx_b:
@@ -96,18 +86,14 @@ def edge_taken(trace: Any, from_node: str, to_node: str) -> None:
     if (from_node, to_node) not in edges:
         edge_strs = [f"{f} -> {t}" for f, t in edges]
         raise AssertionError(
-            f"Edge '{from_node}' -> '{to_node}' was NOT taken.\n"
-            f"Edges taken: {edge_strs}"
+            f"Edge '{from_node}' -> '{to_node}' was NOT taken.\nEdges taken: {edge_strs}"
         )
 
 
 def no_errors(trace: Any) -> None:
     """Assert that no nodes had errors during execution."""
     nodes = _get_nodes(trace)
-    errored = [
-        _get_node_name(n) for n in nodes
-        if _get_node_status(n) == "error"
-    ]
+    errored = [_get_node_name(n) for n in nodes if _get_node_status(n) == "error"]
     if errored:
         raise AssertionError(
             f"Expected no errors, but {len(errored)} node(s) had errors: {errored}"
@@ -124,13 +110,11 @@ def total_nodes_visited(
     count = len(visited)
     if min is not None and count < min:
         raise AssertionError(
-            f"Expected at least {min} nodes visited, but got {count}.\n"
-            f"Visited nodes: {visited}"
+            f"Expected at least {min} nodes visited, but got {count}.\nVisited nodes: {visited}"
         )
     if max is not None and count > max:
         raise AssertionError(
-            f"Expected at most {max} nodes visited, but got {count}.\n"
-            f"Visited nodes: {visited}"
+            f"Expected at most {max} nodes visited, but got {count}.\nVisited nodes: {visited}"
         )
 
 
@@ -150,8 +134,7 @@ def _get_node_by_name(trace: Any, node_name: str) -> Any:
         if node is not None:
             return node
     raise AssertionError(
-        f"Node '{node_name}' was NOT visited.\n"
-        f"Visited nodes: {_get_node_names(trace)}"
+        f"Node '{node_name}' was NOT visited.\nVisited nodes: {_get_node_names(trace)}"
     )
 
 
@@ -173,10 +156,7 @@ def state_at_node(
 
     result = predicate(state)
     if result is False:
-        raise AssertionError(
-            f"State predicate failed for node '{node_name}'.\n"
-            f"State: {state}"
-        )
+        raise AssertionError(f"State predicate failed for node '{node_name}'.\nState: {state}")
 
 
 def max_duration(trace: Any, node_name: str, ms: float) -> None:

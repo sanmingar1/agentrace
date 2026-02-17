@@ -15,6 +15,7 @@ from tests.agents.simple_agent import create_simple_agent
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def agent():
     return create_simple_agent()
@@ -40,6 +41,7 @@ def trace(result_and_trace):
 # TracedGraph.invoke() produces a Trace
 # ---------------------------------------------------------------------------
 
+
 class TestTracedGraphInvoke:
     def test_invoke_returns_result(self, result_and_trace):
         result, _ = result_and_trace
@@ -63,6 +65,7 @@ class TestTracedGraphInvoke:
 # TracedGraph.stream()
 # ---------------------------------------------------------------------------
 
+
 class TestTracedGraphStream:
     def test_stream_yields_chunks(self, traced):
         chunks = list(traced.stream({"query": "test"}))
@@ -78,6 +81,7 @@ class TestTracedGraphStream:
 # ---------------------------------------------------------------------------
 # Trace model properties
 # ---------------------------------------------------------------------------
+
 
 class TestTraceModel:
     def test_node_names_order(self, trace):
@@ -115,6 +119,7 @@ class TestTraceModel:
 # State diffs
 # ---------------------------------------------------------------------------
 
+
 class TestStateDiff:
     def test_compute_state_diff_added(self):
         diff = compute_state_diff({"a": 1}, {"a": 1, "b": 2})
@@ -145,6 +150,7 @@ class TestStateDiff:
 # Edge transitions
 # ---------------------------------------------------------------------------
 
+
 class TestEdgeTransitions:
     def test_edges_created(self, trace):
         assert len(trace.edges) == 2  # retriever->processor, processor->generator
@@ -160,6 +166,7 @@ class TestEdgeTransitions:
 # ---------------------------------------------------------------------------
 # Error handling
 # ---------------------------------------------------------------------------
+
 
 class TestErrorHandling:
     def test_node_error_captured(self):
@@ -206,6 +213,7 @@ class TestErrorHandling:
 # Pydantic serialization
 # ---------------------------------------------------------------------------
 
+
 class TestSerialization:
     def test_model_dump_json(self, trace):
         json_str = trace.model_dump_json()
@@ -224,6 +232,7 @@ class TestSerialization:
 # ---------------------------------------------------------------------------
 # Assertions work with Trace objects
 # ---------------------------------------------------------------------------
+
 
 class TestAssertionsWithTrace:
     def test_node_was_visited_with_trace(self, trace):
@@ -315,14 +324,16 @@ class TestAssertionsWithTrace:
 
     def test_state_at_node(self, trace):
         assertions.state_at_node(
-            trace, "retriever",
+            trace,
+            "retriever",
             lambda s: "documents" in s,
         )
 
     def test_state_at_node_fails(self, trace):
         with pytest.raises(AssertionError, match="State predicate failed"):
             assertions.state_at_node(
-                trace, "retriever",
+                trace,
+                "retriever",
                 lambda s: "nonexistent_key" in s,
             )
 
@@ -343,6 +354,7 @@ class TestAssertionsWithTrace:
 # ---------------------------------------------------------------------------
 # Mermaid diagram generator
 # ---------------------------------------------------------------------------
+
 
 class TestMermaidGenerator:
     def test_to_mermaid_basic(self, trace):
@@ -410,6 +422,7 @@ class TestMermaidGenerator:
 # Rich reporter
 # ---------------------------------------------------------------------------
 
+
 class TestRichReporter:
     def test_print_trace_runs(self, trace):
         console = Console(file=None, force_terminal=True, width=120)
@@ -424,6 +437,7 @@ class TestRichReporter:
     def test_print_trace_dict_still_works(self):
         """Legacy dict traces should still render."""
         from agentrace import capture
+
         agent = create_simple_agent()
         dict_trace = capture(agent, {"query": "test"})
         console = Console(file=None, force_terminal=True, width=120)

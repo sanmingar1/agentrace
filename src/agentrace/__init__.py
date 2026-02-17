@@ -13,6 +13,13 @@ from agentrace.reporters.mermaid import to_mermaid
 from agentrace.reporters.terminal import print_trace
 
 __all__ = [
-    "capture", "print_trace", "to_mermaid", "to_html", "to_json", "to_junit_xml",
-    "assertions", "Trace", "wrap",
+    "capture",
+    "print_trace",
+    "to_mermaid",
+    "to_html",
+    "to_json",
+    "to_junit_xml",
+    "assertions",
+    "Trace",
+    "wrap",
 ]
